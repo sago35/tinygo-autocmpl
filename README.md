@@ -4,6 +4,8 @@ tinygo-autocmpl adds bash completion to tinygo
 
 ## Description
 
+![tinygo-autocmpl](tinygo-autocmpl.gif)
+
 ## Usage
 
 You can enable autocompletion by setting the following to `~/.bashrc` etc.  
