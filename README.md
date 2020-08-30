@@ -1,6 +1,9 @@
 # tinygo-autocmpl
 
-tinygo-autocmpl adds bash completion to tinygo
+`tinygo-autocmpl` adds bash completion to tinygo  
+
+`tinygo-autocmpl` only support bash at the moment, but other shells like zsh and fish should be able to do the same.  
+Your contributions are welcome.  
 
 ## Description
 
