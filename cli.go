@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
-	"os"
 )
 
 const (
@@ -18,16 +18,18 @@ type cli struct {
 
 // Run ...
 func (c *cli) Run(args []string) error {
-	if len(os.Args) < 2 {
-		fmt.Printf("usage: tinygo-autocompl --completion-script-bash")
+	var (
+		completionScriptBash = flag.Bool("completion-script-bash", false, "print completion-script-bash")
+	)
+
+	flag.Parse()
+
+	if *completionScriptBash {
+		handleCompletionScriptBash()
 		return nil
 	}
 
-	if os.Args[1] == `--completion-script-bash` {
-		handleCompletionScriptBash()
-	} else {
-		fmt.Printf("%s\n", completionBash(os.Args[2:]))
-	}
+	fmt.Printf("%s\n", completionBash(flag.Args()))
 
 	return nil
 }

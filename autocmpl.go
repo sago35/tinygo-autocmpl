@@ -53,7 +53,7 @@ _tinygo_autocmpl_bash_autocomplete() {
     local cur prev opts base
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
-    opts=$( tinygo-autocmpl --completion-bash ${COMP_WORDS[@]:1:$COMP_CWORD} )
+    opts=$( tinygo-autocmpl -- ${COMP_WORDS[@]:1:$COMP_CWORD} )
     if [ "${opts}" = "" ]; then
         compopt -o filenames
         COMPREPLY=( $(compgen -f -- "${cur}" ) )
