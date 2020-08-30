@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
-
-	"gopkg.in/alecthomas/kingpin.v2"
+	"os"
 )
 
 const (
@@ -17,28 +16,17 @@ type cli struct {
 	errStream io.Writer
 }
 
-var (
-	app = kingpin.New(appName, appDescription)
-)
-
 // Run ...
 func (c *cli) Run(args []string) error {
-	app.UsageWriter(c.errStream)
+	if len(os.Args) < 2 {
+		fmt.Printf("usage: tinygo-autocompl --completion-script-bash")
+		return nil
+	}
 
-	if VERSION != "" {
-		app.Version(fmt.Sprintf("%s version %s build %s", appName, VERSION, BUILDDATE))
+	if os.Args[1] == `--completion-script-bash` {
+		handleCompletionScriptBash()
 	} else {
-		app.Version(fmt.Sprintf("%s version - build -", appName))
-	}
-	app.HelpFlag.Short('h')
-
-	k, err := app.Parse(args[1:])
-	if err != nil {
-		return err
-	}
-
-	switch k {
-	default:
+		fmt.Printf("%s\n", completionBash(os.Args[2:]))
 	}
 
 	return nil
