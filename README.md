@@ -52,6 +52,11 @@ go get github.com/sago35/tinygo-autocmpl
 
 * go
 
+I tested tinygo-autocmpl in the following environments.
+
+* ubuntu + bash
+* windows + bash (git for windows)
+
 ## Notice
 
 ## Author
