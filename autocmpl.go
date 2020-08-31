@@ -43,7 +43,7 @@ var (
 		"pca10040", "pca10056-s140v7", "pca10056", "pinetime-devkit0", "pybadge",
 		"pygamer", "pyportal", "reelboard-s140v7", "reelboard", "riscv-qemu",
 		"stm32f405", "stm32f4disco-1", "stm32f4disco", "teensy36", "trinket-m0",
-		"wasm", "wioterminal", "x9pro", "xiao", "esp32",
+		"wasm", "wioterminal", "x9pro", "xiao", "esp32", "esp32-wroom-32",
 	}
 	validCommands = []string{"build", "run", "test", "flash", "gdb", "env", "list", "clean", "help"}
 )
