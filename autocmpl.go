@@ -65,12 +65,41 @@ _tinygo_autocmpl_bash_autocomplete() {
 complete -F _tinygo_autocmpl_bash_autocomplete tinygo
 `
 
+const completionScriptZshStr = `#compdef tinygo
+
+autoload -U compinit && compinit
+autoload -U bashcompinit && bashcompinit
+
+_tinygo_autocmpl_bash_autocomplete() {
+    local cur prev opts base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    opts=$( tinygo-autocmpl %s -- ${COMP_WORDS[@]:1:$COMP_CWORD} )
+    if [ "${opts}" = "" ]; then
+        COMPREPLY=( $(compgen -f -- "${cur}" ) )
+    else
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    fi
+    return 0
+}
+complete -o nospace -F _tinygo_autocmpl_bash_autocomplete tinygo
+`
+
 func handleCompletionScriptBash(listPath string) {
 	targets := ""
 	if listPath != "" {
 		targets = fmt.Sprintf("--targets=%q", listPath)
 	}
 	fmt.Printf(completionScriptBashStr, targets)
+	return
+}
+
+func handleCompletionScriptZsh(listPath string) {
+	targets := ""
+	if listPath != "" {
+		targets = fmt.Sprintf("--targets=%q", listPath)
+	}
+	fmt.Printf(completionScriptZshStr, targets)
 	return
 }
 
