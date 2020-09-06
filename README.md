@@ -1,8 +1,8 @@
 # tinygo-autocmpl
 
-`tinygo-autocmpl` adds bash/zsh completion to tinygo  
+`tinygo-autocmpl` adds bash/zsh/clink completion to tinygo  
 
-`tinygo-autocmpl` only support bash and zsh at the moment, but other shells like fish should be able to do the same.  
+`tinygo-autocmpl` only support bash, zsh and clink at the moment, but other shells like fish should be able to do the same.  
 Your contributions are welcome.  
 
 ## Description
@@ -19,6 +19,9 @@ $ eval "$(tinygo-autocmpl --completion-script-bash)"
 
 # zsh
 $ eval "$(tinygo-autocmpl --completion-script-zsh)"
+
+# clink (windows)
+$ tinygo-autocmpl --completion-script-clink > %LOCALAPPDATA%\clink\tinygo.lua
 ```
 
 You can customize the auto-completion of the -target flag in the following way  
@@ -61,9 +64,12 @@ go get github.com/sago35/tinygo-autocmpl
 
 I tested tinygo-autocmpl in the following environments.
 
-* ubuntu + bash
-* ubuntu + zsh
-* windows + bash (git for windows)
+* ubuntu
+    * bash
+    * zsh
+* windows
+    * bash (git for windows)
+    * clink (https://mridgers.github.io/clink/)
 
 ## Notice
 
