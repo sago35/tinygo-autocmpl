@@ -21,9 +21,10 @@ type cli struct {
 // Run ...
 func (c *cli) Run(args []string) error {
 	var (
-		completionScriptBash = flag.Bool("completion-script-bash", false, "print completion-script-bash")
-		completionScriptZsh  = flag.Bool("completion-script-zsh", false, "print completion-script-zsh")
-		targetsListPath      = flag.String("targets", "", "targets list file")
+		completionScriptBash  = flag.Bool("completion-script-bash", false, "print completion-script-bash")
+		completionScriptZsh   = flag.Bool("completion-script-zsh", false, "print completion-script-zsh")
+		completionScriptClink = flag.Bool("completion-script-clink", false, "print completion-script-clink")
+		targetsListPath       = flag.String("targets", "", "targets list file")
 	)
 
 	flag.Parse()
@@ -35,6 +36,11 @@ func (c *cli) Run(args []string) error {
 
 	if *completionScriptZsh {
 		handleCompletionScriptZsh(*targetsListPath)
+		return nil
+	}
+
+	if *completionScriptClink {
+		handleCompletionScriptClink(*targetsListPath)
 		return nil
 	}
 

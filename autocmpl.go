@@ -104,6 +104,83 @@ func handleCompletionScriptZsh(listPath string) {
 	return
 }
 
+const completionScriptClinkStr = `
+local parser = clink.arg.new_parser
+
+local tinygo_targets_parser = parser({
+    %s,
+})
+
+-- function getTargets(dir)
+--     local handle = io.popen("dir /b "..dir.."\\*.json", "r")
+--     local content = handle:read("*all")
+--     handle:close()
+-- 
+--     local t = {}
+--     i = 1
+-- 
+--     for s in string.gmatch(content, "([^\n]+).json") do
+--         t[i] = s
+--         i = i + 1
+--     end
+-- 
+--     return t
+-- end
+
+-- local tinygo_targets_parser = parser(getTargets("C:\\tinygo\\targets"))
+
+
+local tinygo_flag_parser = parser(
+    %s
+    )
+
+local tinygo_parser = parser({
+    "build"..tinygo_flag_parser,
+    "run"..tinygo_flag_parser,
+    "test"..tinygo_flag_parser,
+    "flash"..tinygo_flag_parser,
+    "gdb"..tinygo_flag_parser,
+    "env"..tinygo_flag_parser,
+    "list"..tinygo_flag_parser,
+    "clean"..tinygo_flag_parser,
+    "help"..tinygo_flag_parser,
+    })
+
+clink.arg.register_parser("tinygo", tinygo_parser)
+`
+
+func handleCompletionScriptClink(listPath string) {
+	targets := []string{}
+	for _, t := range validTargets {
+		targets = append(targets, fmt.Sprintf("%q", t))
+	}
+
+	flags := []string{}
+	for _, f := range getFlagCompletion() {
+		m, ok := flagCompleteMap[f]
+		if !ok {
+			panic("panic")
+		}
+
+		if 0 < len(m) {
+			p := []string{}
+			for _, c := range m {
+				p = append(p, fmt.Sprintf("%q", c))
+			}
+
+			flags = append(flags, fmt.Sprintf(`"-%s"..parser({%s})`, f, strings.Join(p, ", ")))
+		} else {
+			flags = append(flags, fmt.Sprintf(`"-%s"`, f))
+		}
+	}
+
+	fmt.Printf(completionScriptClinkStr,
+		strings.Join(targets, ", "),
+		strings.Join(flags, ",\n    "),
+	)
+	return
+}
+
 // handleCompletionBash returns a string to be used in bash's compgen.
 // Typically, the input will look like this
 //   args := []string{"flash", "-target"}
@@ -171,5 +248,6 @@ func getFlagCompletion() []string {
 	for k := range flagCompleteMap {
 		ret = append(ret, k)
 	}
+	ret.Sort()
 	return ret
 }
