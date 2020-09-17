@@ -1,7 +1,13 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -32,20 +38,7 @@ var flagCompleteMap = map[string][]string{
 
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
 var (
-	validTargets = []string{
-		"arduino-mega2560", "arduino-nano", "arduino-nano33", "arduino", "atmega1284p",
-		"atsame54-xpro", "atsame54p20a", "bluepill", "circuitplay-bluefruit", "circuitplay-express",
-		"clue_alpha", "cortex-m-qemu", "digispark", "feather-m0", "feather-m4",
-		"feather-nrf52840", "gameboy-advance", "hifive1-qemu", "hifive1b", "itsybitsy-m0",
-		"itsybitsy-m4", "itsybitsy-nrf52840", "maixbit", "metro-m4-airlift", "microbit-s110v8",
-		"microbit", "nintendoswitch", "nrf52840-mdk", "nucleo-f103rb", "particle-3rd-gen",
-		"particle-argon", "particle-boron", "particle-xenon", "pca10031", "pca10040-s132v6",
-		"pca10040", "pca10056-s140v7", "pca10056", "pinetime-devkit0", "pybadge",
-		"pygamer", "pyportal", "reelboard-s140v7", "reelboard", "riscv-qemu",
-		"stm32f405", "stm32f4disco-1", "stm32f4disco", "teensy36", "trinket-m0",
-		"wasm", "wioterminal", "x9pro", "xiao", "esp32", "esp32-wroom-32",
-		"feather-stm32f405",
-	}
+	validTargets  []string
 	validCommands = []string{"build", "run", "test", "flash", "gdb", "env", "list", "clean", "help"}
 )
 
@@ -149,6 +142,22 @@ local tinygo_parser = parser({
 clink.arg.register_parser("tinygo", tinygo_parser)
 `
 
+func init() {
+	targets, err := getTargetsFromTinygoTargets()
+	if err != nil {
+		if os.Getenv(`TINYGOPATH`) == "" {
+			log.Fatalf("$TINYGOPATH is not set. ex: export TINYGOPATH=/path/to/your/tinygo/")
+		}
+		targets, err = getTargets(os.Getenv(`TINYGOPATH`))
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	validTargets = targets
+
+	flagCompleteMap["target"] = validTargets
+}
+
 func handleCompletionScriptClink(listPath string) {
 	targets := []string{}
 	for _, t := range validTargets {
@@ -250,4 +259,41 @@ func getFlagCompletion() []string {
 	}
 	ret.Sort()
 	return ret
+}
+
+func getTargets(tinygopath string) ([]string, error) {
+	return getTargetsFromJson(tinygopath)
+}
+
+func getTargetsFromJson(tinygopath string) ([]string, error) {
+	// read from $TINYGOPATH/targets/*.json
+	matches, err := filepath.Glob(filepath.Join(os.Getenv(`TINYGOPATH`), `targets`, `*.json`))
+	if err != nil {
+		return nil, err
+	}
+	for i := range matches {
+		matches[i] = strings.TrimSuffix(filepath.Base(matches[i]), filepath.Ext(matches[i]))
+	}
+
+	return matches, err
+}
+
+func getTargetsFromTinygoTargets() ([]string, error) {
+	buf := new(bytes.Buffer)
+	cmd := exec.Command("tinygo", "targets")
+	cmd.Stdout = buf
+	cmd.Stderr = buf
+
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	targets := []string{}
+	scanner := bufio.NewScanner(buf)
+	for scanner.Scan() {
+		targets = append(targets, scanner.Text())
+	}
+
+	return targets, nil
 }
