@@ -14,10 +14,13 @@ import (
 
 // flagCompleteMap specifies which flags to autocomplete.
 var flagCompleteMap = map[string][]string{
+	"c":            nil,
 	"cflags":       {},
+	"deps":         nil,
 	"dumpssa":      nil,
 	"gc":           {"none", "leaking", "extalloc", "conservative"},
 	"heap-size":    {},
+	"json":         nil,
 	"ldflags":      {},
 	"no-debug":     nil,
 	"o":            {},
@@ -33,13 +36,14 @@ var flagCompleteMap = map[string][]string{
 	"tags":         {},
 	"target":       validTargets,
 	"verifyir":     nil,
+	"x":            nil,
 	"wasm-abi":     {},
 }
 
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
 var (
 	validTargets  []string
-	validCommands = []string{"build", "run", "test", "flash", "gdb", "env", "list", "clean", "help"}
+	validCommands = []string{"build", "build-library", "run", "test", "flash", "gdb", "env", "list", "clean", "help"}
 )
 
 const completionScriptBashStr = `
