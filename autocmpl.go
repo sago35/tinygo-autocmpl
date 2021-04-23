@@ -25,9 +25,10 @@ var flagCompleteMap = map[string][]string{
 	"no-debug":     nil,
 	"o":            {},
 	"ocd-output":   nil,
-	"opt":          {"1", "2", "s", "z"},
+	"opt":          {"0", "1", "2", "s", "z"},
 	"panic":        {"print", "trap"},
 	"port":         {},
+	"print-allocs": {},
 	"print-stacks": nil,
 	"printir":      nil,
 	"programmer":   {"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink"},
@@ -36,8 +37,8 @@ var flagCompleteMap = map[string][]string{
 	"tags":         {},
 	"target":       validTargets,
 	"verifyir":     nil,
-	"x":            nil,
 	"wasm-abi":     {},
+	"x":            nil,
 }
 
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
