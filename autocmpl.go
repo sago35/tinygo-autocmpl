@@ -5,9 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -150,13 +148,7 @@ clink.arg.register_parser("tinygo", tinygo_parser)
 func init() {
 	targets, err := getTargetsFromTinygoTargets()
 	if err != nil {
-		if os.Getenv(`TINYGOPATH`) == "" {
-			log.Fatalf("$TINYGOPATH is not set. ex: export TINYGOPATH=/path/to/your/tinygo/")
-		}
-		targets, err = getTargets(os.Getenv(`TINYGOPATH`))
-		if err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal(err)
 	}
 	validTargets = targets
 
@@ -264,23 +256,6 @@ func getFlagCompletion() []string {
 	}
 	ret.Sort()
 	return ret
-}
-
-func getTargets(tinygopath string) ([]string, error) {
-	return getTargetsFromJson(tinygopath)
-}
-
-func getTargetsFromJson(tinygopath string) ([]string, error) {
-	// read from $TINYGOPATH/targets/*.json
-	matches, err := filepath.Glob(filepath.Join(os.Getenv(`TINYGOPATH`), `targets`, `*.json`))
-	if err != nil {
-		return nil, err
-	}
-	for i := range matches {
-		matches[i] = strings.TrimSuffix(filepath.Base(matches[i]), filepath.Ext(matches[i]))
-	}
-
-	return matches, err
 }
 
 func getTargetsFromTinygoTargets() ([]string, error) {
