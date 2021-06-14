@@ -45,7 +45,21 @@ var flagCompleteMap = map[string][]string{
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
 var (
 	validTargets  []string
-	validCommands = []string{"build", "build-library", "run", "test", "flash", "gdb", "env", "list", "clean", "help"}
+	validCommands = []string{
+		"build",
+		"build-library",
+		"flash",
+		"gdb",
+		"run",
+		"test",
+		"targets",
+		"info",
+		"list",
+		"clean",
+		"help",
+		"version",
+		"env",
+	}
 )
 
 const completionScriptBashStr = `
