@@ -31,7 +31,7 @@ var flagCompleteMap = map[string][]string{
 	"print-allocs":  {},
 	"print-stacks":  nil,
 	"printir":       nil,
-	"programmer":    {"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink"},
+	"programmer":    {"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink", "bmp", "picoprobe"},
 	"scheduler":     {"none", "tasks", "coroutines"},
 	"serial":        {"none", "uart", "usb"},
 	"size":          {"none", "short", "full"},
