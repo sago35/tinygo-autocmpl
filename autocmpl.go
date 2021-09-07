@@ -14,6 +14,7 @@ import (
 var flagCompleteMap = map[string][]string{
 	"c":             nil,
 	"cflags":        {},
+	"cpuprofile":    {},
 	"deps":          nil,
 	"dumpssa":       nil,
 	"gc":            {"none", "leaking", "extalloc", "conservative"},
