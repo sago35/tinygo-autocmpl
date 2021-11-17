@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -32,7 +33,7 @@ var flagCompleteMap = map[string][]string{
 	"print-allocs":  {},
 	"print-stacks":  nil,
 	"printir":       nil,
-	"programmer":    {"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink", "bmp", "picoprobe"},
+	"programmer":    validProgrammers,
 	"scheduler":     {"none", "tasks", "coroutines"},
 	"serial":        {"none", "uart", "usb"},
 	"size":          {"none", "short", "full"},
@@ -45,8 +46,9 @@ var flagCompleteMap = map[string][]string{
 
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
 var (
-	validTargets  []string
-	validCommands = []string{
+	validProgrammers []string
+	validTargets     []string
+	validCommands    = []string{
 		"build",
 		"build-library",
 		"flash",
@@ -170,6 +172,13 @@ func init() {
 	}
 	validTargets = targets
 
+	programmers, err := getProgrammers()
+	if err != nil {
+		log.Fatal(err)
+	}
+	validProgrammers = programmers
+
+	flagCompleteMap["programmer"] = validProgrammers
 	flagCompleteMap["target"] = validTargets
 }
 
@@ -294,4 +303,31 @@ func getTargetsFromTinygoTargets() ([]string, error) {
 	}
 
 	return targets, nil
+}
+
+func getProgrammers() ([]string, error) {
+	programmers := []string{}
+
+	p, err := exec.LookPath(`openocd`)
+	if err != nil {
+		return nil, err
+	}
+
+	b := filepath.Dir(p)
+	matches, err := filepath.Glob(fmt.Sprintf("%s/../share/openocd/scripts/interface/*.cfg", b))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, m := range matches {
+		programmer := strings.TrimSuffix(m, filepath.Ext(m))
+		programmer = filepath.Base(programmer)
+		programmers = append(programmers, programmer)
+	}
+
+	if len(programmers) == 0 {
+		programmers = []string{"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink", "bmp", "picoprobe"}
+	}
+
+	return programmers, nil
 }
