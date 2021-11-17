@@ -73,6 +73,12 @@ I tested tinygo-autocmpl in the following environments.
 
 ## Notice
 
+This project uses [goreleaser](https://goreleaser.com/) for release
+
+## LICENSE
+
+MIT
+
 ## Author
 
 sago35 - <sago35@gmail.com>
