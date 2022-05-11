@@ -55,7 +55,7 @@ feather-m4   wioterminal  xiao
 ## Installation
 
 ```
-go get github.com/sago35/tinygo-autocmpl
+go install github.com/sago35/tinygo-autocmpl@latest
 ```
 
 ### Environment
