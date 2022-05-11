@@ -27,6 +27,7 @@ var flagCompleteMap = map[string][]string{
 	"o":             {},
 	"ocd-commands":  {},
 	"ocd-output":    nil,
+	"ocd-verify":    nil,
 	"opt":           {"0", "1", "2", "s", "z"},
 	"p":             {},
 	"panic":         {"print", "trap"},
@@ -311,20 +312,18 @@ func getProgrammers() ([]string, error) {
 	programmers := []string{}
 
 	p, err := exec.LookPath(`openocd`)
-	if err != nil {
-		return nil, err
-	}
+	if err == nil {
+		b := filepath.Dir(p)
+		matches, err := filepath.Glob(fmt.Sprintf("%s/../share/openocd/scripts/interface/*.cfg", b))
+		if err != nil {
+			return nil, err
+		}
 
-	b := filepath.Dir(p)
-	matches, err := filepath.Glob(fmt.Sprintf("%s/../share/openocd/scripts/interface/*.cfg", b))
-	if err != nil {
-		return nil, err
-	}
-
-	for _, m := range matches {
-		programmer := strings.TrimSuffix(m, filepath.Ext(m))
-		programmer = filepath.Base(programmer)
-		programmers = append(programmers, programmer)
+		for _, m := range matches {
+			programmer := strings.TrimSuffix(m, filepath.Ext(m))
+			programmer = filepath.Base(programmer)
+			programmers = append(programmers, programmer)
+		}
 	}
 
 	if len(programmers) == 0 {
