@@ -330,5 +330,7 @@ func getProgrammers() ([]string, error) {
 		programmers = []string{"stlink-v2", "stlink-v2-1", "cmsis-dap", "jlink", "bmp", "picoprobe"}
 	}
 
+	programmers = append(programmers, "openocd")
+
 	return programmers, nil
 }
