@@ -13,6 +13,8 @@ import (
 
 // flagCompleteMap specifies which flags to autocomplete.
 var flagCompleteMap = map[string][]string{
+	"bench":         {},
+	"benchtime":     {},
 	"c":             nil,
 	"cflags":        {},
 	"cpuprofile":    {},
@@ -36,15 +38,19 @@ var flagCompleteMap = map[string][]string{
 	"print-stacks":  nil,
 	"printir":       nil,
 	"programmer":    validProgrammers,
+	"run":           {},
 	"scheduler":     {"none", "tasks", "asyncify", "coroutines"},
 	"serial":        {"none", "uart", "usb"},
 	"size":          {"none", "short", "full"},
+	"short":         nil,
 	"tags":          {},
 	"target":        validTargets,
+	"test":          nil,
 	"verifyir":      nil,
 	"wasm-abi":      {"generic", "js"},
 	"work":          nil,
 	"x":             nil,
+	"v":             nil,
 }
 
 // validTargets is a list of completion targets for -target. It can be overridden by arguments.
@@ -54,17 +60,21 @@ var (
 	validCommands    = []string{
 		"build",
 		"build-library",
+		"clang",
+		"clean",
+		"env",
 		"flash",
 		"gdb",
-		"run",
-		"test",
-		"targets",
-		"info",
-		"list",
-		"clean",
 		"help",
+		"info",
+		"ld.lld",
+		"list",
+		"lldb",
+		"run",
+		"targets",
+		"test",
 		"version",
-		"env",
+		"wasm-ld",
 	}
 )
 
