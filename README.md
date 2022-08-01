@@ -9,6 +9,10 @@ Your contributions are welcome.
 
 ![tinygo-autocmpl](tinygo-autocmpl.gif)
 
+You can easily try it with VSCode/devcontainer by using the following repository.  
+
+* https://github.com/sago35/tinygo-devcontainer
+
 ## Usage
 
 You can enable autocompletion by setting the following to `~/.bashrc` etc.  
@@ -28,28 +32,28 @@ You can customize the auto-completion of the -target flag in the following way
 This allows you to use only your own targets, for example.  
 
 ```
-$ cat ~/.tinygo.targets 
+$ cat ~/.tinygo.targets
 feather-m4
 xiao
 
 $ eval "$(tinygo-autocmpl --targets ~/.tinygo.targets --completion-script-bash)"
 
-$ tinygo flash --target 
-feather-m4  xiao        
+$ tinygo flash --target
+feather-m4  xiao
 ```
 
 To add wioterminal to the autocompletion candidates, do this
 
 ```
-$ echo wioterminal >> ~/.tinygo.targets 
+$ echo wioterminal >> ~/.tinygo.targets
 
 $ cat ~/.tinygo.targets
 feather-m4
 xiao
 wioterminal
 
-$ tinygo flash --target 
-feather-m4   wioterminal  xiao         
+$ tinygo flash --target
+feather-m4   wioterminal  xiao
 ```
 
 ## Installation
