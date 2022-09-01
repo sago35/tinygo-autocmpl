@@ -229,7 +229,8 @@ func handleCompletionScriptClink(listPath string) {
 
 // handleCompletionBash returns a string to be used in bash's compgen.
 // Typically, the input will look like this
-//   args := []string{"flash", "-target"}
+//
+//	args := []string{"flash", "-target"}
 func completionBash(args []string) string {
 	if len(args) == 0 {
 		return fmt.Sprint(strings.Join(validCommands, " "))
@@ -300,13 +301,14 @@ func getFlagCompletion() []string {
 
 func getTargetsFromTinygoTargets() ([]string, error) {
 	buf := new(bytes.Buffer)
+	errBuf := new(bytes.Buffer)
 	cmd := exec.Command("tinygo", "targets")
 	cmd.Stdout = buf
-	cmd.Stderr = buf
+	cmd.Stderr = errBuf
 
 	err := cmd.Run()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("`tinygo targets` failed : %w : %s", err, errBuf.String())
 	}
 
 	targets := []string{}
