@@ -1,5 +1,9 @@
 # CHANGES
 
+0.5.0
+
+    - Add monitor subcommand and -monitor flag
+
 0.4.0
 
     - Improve error handling
