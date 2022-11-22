@@ -31,7 +31,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.app_name }}-autocmpl-linux-amd64
+          name: ${{ env.app_name }}-linux-amd64
           path: |
             ${{ env.app_name }}
 
