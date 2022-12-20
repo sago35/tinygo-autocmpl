@@ -1,5 +1,10 @@
 # CHANGES
 
+0.6.0
+
+    - Updated as of tinygo 0.26
+    - Add $TINYGOROOT to package completion source
+
 0.5.0
 
     - Add monitor subcommand and -monitor flag
