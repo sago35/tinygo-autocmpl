@@ -9,9 +9,9 @@ Your contributions are welcome.
 
 ![tinygo-autocmpl](tinygo-autocmpl.gif)
 
-You can easily try it with VSCode/devcontainer by using the following repository.  
+You can easily try `tinygo-autocmpl` with `GitHub Codespaces`.  
 
-* https://github.com/sago35/tinygo-devcontainer
+![codespace](codespace.png)
 
 ## Usage
 
