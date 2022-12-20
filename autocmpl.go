@@ -90,9 +90,24 @@ _tinygo_autocmpl_bash_autocomplete() {
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     opts=$( tinygo-autocmpl %s -- ${COMP_WORDS[@]:1:$COMP_CWORD} )
+    tinygoroot=$( tinygo env TINYGOROOT )
+    if [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
+        tinygoroot=$( cygpath --unix "${tinygoroot}" )
+    fi
+
     if [ "${opts}" = "" ]; then
-        compopt -o filenames
-        COMPREPLY=( $(compgen -f -- "${cur}" ) )
+        case "${cur}" in
+            .*)
+                compopt -o filenames
+                COMPREPLY=( $(compgen -f -- "${cur}" ) )
+                ;;
+            *)
+                compopt -o nospace
+                for j in $(compgen -f -- "${tinygoroot}/src/${cur}" ); do
+                    COMPREPLY[k++]=${j#${tinygoroot}/src/}
+                done
+                ;;
+        esac
     else
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     fi
