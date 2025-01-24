@@ -85,13 +85,21 @@ _tinygo_autocmpl_bash_autocomplete() {
     local cur prev opts base
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts=$( tinygo-autocmpl %s -- ${COMP_WORDS[@]:1:$COMP_CWORD} )
     tinygoroot=$( tinygo env TINYGOROOT )
     if [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
         tinygoroot=$( cygpath --unix "${tinygoroot}" )
     fi
 
-    if [ "${opts}" = "" ]; then
+    if [[ "${prev}" == "--target" && "${cur}" == */* ]]; then 
+        compopt -o filenames
+        COMPREPLY=($(compgen -f -- "${cur}" | while read -r file; do
+        if [[ -d "$file" || "$file" == *.json ]]; then
+            echo "$file"
+        fi
+    done))
+    elif [ "${opts}" = "" ]; then
         case "${cur}" in
             .*)
                 compopt -o filenames
@@ -287,6 +295,12 @@ func completionBash(args []string) string {
 
 		if strings.HasPrefix(prev, "-") {
 			f := strings.TrimPrefix(prev, dash)
+
+			if f == "target" {
+				if strings.ContainsAny(cur, "/") {
+					return ""
+				}
+			}
 			if m, ok := flagCompleteMap[f]; ok {
 				for _, v := range m {
 					if v == cur {
