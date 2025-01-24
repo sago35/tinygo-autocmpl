@@ -1,5 +1,9 @@
 # CHANGES
 
+0.7.0
+
+    - Updated as of tinygo 0.35
+
 0.6.0
 
     - Updated as of tinygo 0.26
