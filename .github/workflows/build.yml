@@ -29,7 +29,7 @@ jobs:
 
       - name: Publish artifact for ubuntu-latest
         if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.app_name }}-linux-amd64
           path: |
@@ -37,7 +37,7 @@ jobs:
 
       - name: Publish artifact for windows-latest
         if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.app_name }}-windows-amd64
           path: |
@@ -45,7 +45,7 @@ jobs:
 
       - name: Publish artifact for macos-latest
         if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.app_name }}-macos-amd64
           path: |
