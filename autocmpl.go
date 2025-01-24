@@ -14,6 +14,7 @@ import (
 // flagCompleteMap specifies which flags to autocomplete.
 var flagCompleteMap = map[string][]string{
 	"baudrate":          {},
+	"buildmode":         {"default", "c-shared"},
 	"bench":             {},
 	"benchmem":          nil,
 	"benchtime":         {},
@@ -44,7 +45,7 @@ var flagCompleteMap = map[string][]string{
 	"programmer":        validProgrammers,
 	"scheduler":         {"none", "tasks", "asyncify", "coroutines"},
 	"serial":            {"none", "uart", "usb"},
-	"size":              {"none", "short", "full"},
+	"size":              {"none", "short", "full", "html"},
 	"stack-size":        {},
 	"tags":              {},
 	"target":            validTargets,
