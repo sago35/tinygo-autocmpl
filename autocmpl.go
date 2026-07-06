@@ -253,11 +253,13 @@ func handleCompletionScriptClink(listPath string) {
 	return
 }
 
-// handleCompletionBash returns a string to be used in bash's compgen.
+// completeArgs is the shell-agnostic completion engine shared by the
+// bash/zsh/fish scripts. Given the words typed after "tinygo" so far, it
+// returns valid next-word candidates as a single space-joined string.
 // Typically, the input will look like this
 //
 //	args := []string{"flash", "-target"}
-func completionBash(args []string) string {
+func completeArgs(args []string) string {
 	if len(args) == 0 {
 		return fmt.Sprint(strings.Join(validCommands, " "))
 	}

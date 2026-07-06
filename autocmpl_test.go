@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCompletionBash(t *testing.T) {
+func TestCompleteArgs(t *testing.T) {
 	tests := []struct {
 		summary  string
 		input    []string
@@ -38,18 +38,18 @@ func TestCompletionBash(t *testing.T) {
 		{
 			summary:  "flag",
 			input:    []string{"flash", "-size"},
-			expected: "none short full",
+			expected: "none short full html",
 		},
 	}
 
 	for _, test := range tests {
-		if g, e := completionBash(test.input), test.expected; g != e {
+		if g, e := completeArgs(test.input), test.expected; g != e {
 			t.Errorf("got %q, want %q (%s)", g, e, test.summary)
 		}
 	}
 }
 
-func TestCompletionBashFlags(t *testing.T) {
+func TestCompleteArgsFlags(t *testing.T) {
 	tests := []struct {
 		summary  string
 		input    []string
@@ -69,7 +69,7 @@ func TestCompletionBashFlags(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := completionBash(test.input)
+		got := completeArgs(test.input)
 		if !strings.Contains(got, test.expected) {
 			t.Errorf("%q is not contained in %q (%s)", test.expected, got, test.summary)
 		}

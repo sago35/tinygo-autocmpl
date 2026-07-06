@@ -60,7 +60,7 @@ func (c *cli) Run(args []string) error {
 		flagCompleteMap["target"] = targets
 	}
 
-	fmt.Printf("%s\n", completionBash(flag.Args()))
+	fmt.Printf("%s\n", completeArgs(flag.Args()))
 
 	return nil
 }
