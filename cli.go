@@ -26,9 +26,23 @@ func (c *cli) Run(args []string) error {
 		completionScriptClink = flag.Bool("completion-script-clink", false, "print completion-script-clink")
 		completionScriptFish  = flag.Bool("completion-script-fish", false, "print completion-script-fish")
 		targetsListPath       = flag.String("targets", "", "targets list file")
+		showVersion           = flag.Bool("version", false, "print version information")
 	)
 
 	flag.Parse()
+
+	if *showVersion {
+		version := VERSION
+		if version == "" {
+			version = "dev"
+		}
+		if BUILDDATE != "" {
+			fmt.Fprintf(c.outStream, "%s version %s (%s)\n", appName, version, BUILDDATE)
+		} else {
+			fmt.Fprintf(c.outStream, "%s version %s\n", appName, version)
+		}
+		return nil
+	}
 
 	if *completionScriptBash {
 		handleCompletionScriptBash(*targetsListPath)
