@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"sort"
@@ -256,17 +255,17 @@ clink.arg.register_parser("tinygo", tinygo_parser)
 `
 
 func init() {
+	// If tinygo is not in PATH, keep going with empty targets so that
+	// completion-script generation and tests still work.
 	targets, err := getTargetsFromTinygoTargets()
-	if err != nil {
-		log.Fatal(err)
+	if err == nil {
+		validTargets = targets
 	}
-	validTargets = targets
 
 	programmers, err := getProgrammers()
-	if err != nil {
-		log.Fatal(err)
+	if err == nil {
+		validProgrammers = programmers
 	}
-	validProgrammers = programmers
 
 	flagCompleteMap["programmer"] = validProgrammers
 	flagCompleteMap["target"] = validTargets
