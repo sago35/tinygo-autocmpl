@@ -159,6 +159,57 @@ func handleCompletionScriptZsh(listPath string) {
 	return
 }
 
+const completionScriptFishStr = `
+function __tinygo_autocmpl_target_file_mode
+    set -l cmd (commandline -opc)
+    test (count $cmd) -gt 0; or return 1
+    test "$cmd[-1]" = "--target"; or return 1
+    string match -q '*/*' -- (commandline -ct)
+end
+
+function __tinygo_autocmpl_complete
+    set -l cmd (commandline -opc)
+    set -l cur (commandline -ct)
+    set -l rest
+    if test (count $cmd) -gt 1
+        set rest $cmd[2..-1]
+    end
+    set -l words $rest $cur
+
+    set -l opts (tinygo-autocmpl %s -- $words)
+    if test -n "$opts"
+        string split ' ' -- $opts
+        return 0
+    end
+
+    if string match -q '.*' -- $cur
+        for f in $cur*
+            echo $f
+        end
+        return 0
+    end
+
+    set -l tinygoroot (tinygo env TINYGOROOT 2>/dev/null)
+    if test -n "$tinygoroot"
+        for p in $tinygoroot/src/$cur*
+            echo (string replace "$tinygoroot/src/" "" -- $p)
+        end
+    end
+end
+
+complete -c tinygo -n '__tinygo_autocmpl_target_file_mode' -F
+complete -c tinygo -n 'not __tinygo_autocmpl_target_file_mode' -f -a '(__tinygo_autocmpl_complete)'
+`
+
+func handleCompletionScriptFish(listPath string) {
+	targets := ""
+	if listPath != "" {
+		targets = fmt.Sprintf("--targets=%q", listPath)
+	}
+	fmt.Printf(completionScriptFishStr, targets)
+	return
+}
+
 const completionScriptClinkStr = `
 local parser = clink.arg.new_parser
 

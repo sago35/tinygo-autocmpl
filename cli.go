@@ -24,6 +24,7 @@ func (c *cli) Run(args []string) error {
 		completionScriptBash  = flag.Bool("completion-script-bash", false, "print completion-script-bash")
 		completionScriptZsh   = flag.Bool("completion-script-zsh", false, "print completion-script-zsh")
 		completionScriptClink = flag.Bool("completion-script-clink", false, "print completion-script-clink")
+		completionScriptFish  = flag.Bool("completion-script-fish", false, "print completion-script-fish")
 		targetsListPath       = flag.String("targets", "", "targets list file")
 	)
 
@@ -41,6 +42,11 @@ func (c *cli) Run(args []string) error {
 
 	if *completionScriptClink {
 		handleCompletionScriptClink(*targetsListPath)
+		return nil
+	}
+
+	if *completionScriptFish {
+		handleCompletionScriptFish(*targetsListPath)
 		return nil
 	}
 
