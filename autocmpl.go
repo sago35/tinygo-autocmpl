@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"sort"
@@ -12,27 +11,31 @@ import (
 )
 
 // flagCompleteMap specifies which flags to autocomplete.
+// Updated as of tinygo 0.41.1 (see tinygo-org/tinygo main.go).
 var flagCompleteMap = map[string][]string{
+	"C":                 {},
 	"baudrate":          {},
-	"buildmode":         {"default", "c-shared"},
 	"bench":             {},
 	"benchmem":          nil,
 	"benchtime":         {},
+	"buildmode":         {"default", "c-shared", "wasi-legacy"},
 	"c":                 nil,
-	"cflags":            {},
+	"count":             {},
 	"cpuprofile":        {},
 	"deps":              nil,
-	"gc":                {"none", "leaking", "extalloc", "conservative"},
-	"heap-size":         {},
+	"gc":                {"none", "leaking", "conservative", "custom", "precise", "boehm"},
+	"go-compatibility":  nil,
 	"internal-dumpssa":  nil,
 	"internal-nodwarf":  nil,
 	"internal-printir":  nil,
 	"internal-verifyir": nil,
 	"interp-timeout":    {},
+	"json":              nil,
 	"ldflags":           {},
 	"llvm-features":     nil,
 	"monitor":           nil,
 	"no-debug":          nil,
+	"nobounds":          nil,
 	"o":                 {},
 	"ocd-commands":      {},
 	"ocd-output":        nil,
@@ -43,13 +46,21 @@ var flagCompleteMap = map[string][]string{
 	"print-allocs":      {},
 	"print-stacks":      nil,
 	"programmer":        validProgrammers,
-	"scheduler":         {"none", "tasks", "asyncify", "coroutines"},
-	"serial":            {"none", "uart", "usb"},
+	"run":               {},
+	"scheduler":         {"none", "tasks", "cores", "threads", "asyncify"},
+	"serial":            {"none", "uart", "usb", "rtt"},
+	"short":             nil,
+	"shuffle":           {"on", "off"},
 	"size":              {"none", "short", "full", "html"},
+	"skip":              {},
 	"stack-size":        {},
 	"tags":              {},
 	"target":            validTargets,
-	"wasm-abi":          {"generic", "js"},
+	"test":              nil,
+	"timeout":           {},
+	"v":                 nil,
+	"wit-package":       {},
+	"wit-world":         {},
 	"work":              nil,
 	"x":                 nil,
 }
@@ -60,7 +71,6 @@ var (
 	validTargets     []string
 	validCommands    = []string{
 		"build",
-		"build-library",
 		"clang",
 		"clean",
 		"env",
@@ -159,6 +169,57 @@ func handleCompletionScriptZsh(listPath string) {
 	return
 }
 
+const completionScriptFishStr = `
+function __tinygo_autocmpl_target_file_mode
+    set -l cmd (commandline -opc)
+    test (count $cmd) -gt 0; or return 1
+    test "$cmd[-1]" = "--target"; or return 1
+    string match -q '*/*' -- (commandline -ct)
+end
+
+function __tinygo_autocmpl_complete
+    set -l cmd (commandline -opc)
+    set -l cur (commandline -ct)
+    set -l rest
+    if test (count $cmd) -gt 1
+        set rest $cmd[2..-1]
+    end
+    set -l words $rest $cur
+
+    set -l opts (tinygo-autocmpl %s -- $words)
+    if test -n "$opts"
+        string split ' ' -- $opts
+        return 0
+    end
+
+    if string match -q '.*' -- $cur
+        for f in $cur*
+            echo $f
+        end
+        return 0
+    end
+
+    set -l tinygoroot (tinygo env TINYGOROOT 2>/dev/null)
+    if test -n "$tinygoroot"
+        for p in $tinygoroot/src/$cur*
+            echo (string replace "$tinygoroot/src/" "" -- $p)
+        end
+    end
+end
+
+complete -c tinygo -n '__tinygo_autocmpl_target_file_mode' -F
+complete -c tinygo -n 'not __tinygo_autocmpl_target_file_mode' -f -a '(__tinygo_autocmpl_complete)'
+`
+
+func handleCompletionScriptFish(listPath string) {
+	targets := ""
+	if listPath != "" {
+		targets = fmt.Sprintf("--targets=%q", listPath)
+	}
+	fmt.Printf(completionScriptFishStr, targets)
+	return
+}
+
 const completionScriptClinkStr = `
 local parser = clink.arg.new_parser
 
@@ -205,17 +266,17 @@ clink.arg.register_parser("tinygo", tinygo_parser)
 `
 
 func init() {
+	// If tinygo is not in PATH, keep going with empty targets so that
+	// completion-script generation and tests still work.
 	targets, err := getTargetsFromTinygoTargets()
-	if err != nil {
-		log.Fatal(err)
+	if err == nil {
+		validTargets = targets
 	}
-	validTargets = targets
 
 	programmers, err := getProgrammers()
-	if err != nil {
-		log.Fatal(err)
+	if err == nil {
+		validProgrammers = programmers
 	}
-	validProgrammers = programmers
 
 	flagCompleteMap["programmer"] = validProgrammers
 	flagCompleteMap["target"] = validTargets
@@ -253,11 +314,13 @@ func handleCompletionScriptClink(listPath string) {
 	return
 }
 
-// handleCompletionBash returns a string to be used in bash's compgen.
+// completeArgs is the shell-agnostic completion engine shared by the
+// bash/zsh/fish scripts. Given the words typed after "tinygo" so far, it
+// returns valid next-word candidates as a single space-joined string.
 // Typically, the input will look like this
 //
 //	args := []string{"flash", "-target"}
-func completionBash(args []string) string {
+func completeArgs(args []string) string {
 	if len(args) == 0 {
 		return fmt.Sprint(strings.Join(validCommands, " "))
 	}
